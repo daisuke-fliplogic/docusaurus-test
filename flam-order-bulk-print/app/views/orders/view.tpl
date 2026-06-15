@@ -26,10 +26,15 @@
     <button type="button" id="btn_download" class="btn">CSVダウンロード</button>
   </div>
 
-  {* 受注明細テーブル *}
+  {* 受注明細テーブル（一括印刷のため form で囲む） *}
+  <form id="orders">
   <table id="order_list" class="list-table">
     <thead>
       <tr>
+        <th class="col-print">
+          印刷<br />
+          <input type="checkbox" id="select_all_print" />
+        </th>
         <th class="col-copy">
           引当<br />
           <input type="checkbox" id="select_all_bulk_copy" />
@@ -50,6 +55,9 @@
     <tbody>
       {foreach from=$orders item=order}
         <tr data-order-id="{$order.Order.id}">
+          <td class="col-print">
+            <input type="checkbox" class="checkbox-item-print" name="print_ids[]" value="{$order.Order.id}" />
+          </td>
           <td class="col-copy">
             <input type="checkbox" class="checkbox-item" name="copy_ids[]" value="{$order.Order.id}" />
           </td>
@@ -68,11 +76,12 @@
         </tr>
       {foreachelse}
         <tr>
-          <td colspan="9" class="no-data">受注データがありません。</td>
+          <td colspan="10" class="no-data">受注データがありません。</td>
         </tr>
       {/foreach}
     </tbody>
   </table>
+  </form>
 
   {include file='common/pagination.tpl'}
 </div>
