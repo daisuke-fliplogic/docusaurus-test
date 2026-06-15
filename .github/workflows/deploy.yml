@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'my-website/**'
+      - '.github/workflows/deploy.yml'
 
 # GitHub Pagesに書き込むための権限設定
 permissions:
