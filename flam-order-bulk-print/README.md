@@ -1,27 +1,22 @@
-# 受注一覧 一括印刷 — 現状コード（PRマージ前スナップショット）
+# 受注一覧 一括印刷 — 変更後コード（PRマージ後スナップショット）
 
-このセットは、添付PR「受注一覧チェックボックス追加・注文請書一括印刷」の
-**変更後**記述から逆算した、**PRマージ前（=現状）** のコードファイル一式です。
-AIにdiffを与えてヘルプを更新する仕組みの入力フィクスチャを想定しています。
+添付PR「受注一覧チェックボックス追加・注文請書一括印刷」の変更を、
+現状（マージ前）コードに適用した**変更後（=マージ後）**の状態です。
+現状版とこのセットを diff すると、PRの実差分が得られます。
 
-## PR変更ファイルとの対応
+## PRで適用した変更
 
-| PRで変更 / 追加 | 本セットの現状ファイル | 状態 |
-| --- | --- | --- |
-| `orders/view.tpl` | `app/views/orders/view.tpl` | form#orders 無し・印刷チェック列無し（引当/発注列は既存） |
-| `view.js`（`bulkPrint`に第6引数追加） | `app/webroot/js/app/view.js` | `bulkPrint(formId, reportGroupCd, modelName, daialog, self)`（checkedSelector無し） |
-| `orders/view.js` | `app/webroot/js/app/orders/view.js` | 引当/発注のトグル・一括処理のみ。印刷バインド・getScript無し |
-| `OrderLayoutSelectorDialogWrapper.tsx`（新規） | （現状では未存在） | 参照元の `SaleLayoutSelectorDialogWrapper.tsx` を同梱 |
-| `webpack.config.js` | `webpack.config.js` | `orderLayoutSelectorDialog` エントリ無し |
-| `js/min/app/view.js` | `app/webroot/js/min/app/view.js` | dev版を terser でミニファイした派生物 |
-| `js/min/app/orders/view.js` | `app/webroot/js/min/app/orders/view.js` | 同上 |
-
-## 想定スタック
-
-CakePHP + Smarty(.tpl) / jQuery / React + TypeScript + Material-UI / webpack / gulp(uglify)
+| ファイル | 変更内容 |
+| --- | --- |
+| `app/views/orders/view.tpl` | テーブルを `<form id="orders">` で囲み、最前列に印刷列（`#select_all_print` / `.checkbox-item-print`）を追加。no-data の colspan を 9→10 |
+| `app/webroot/js/app/view.js` | `bulkPrint` に第6引数 `checkedSelector` を追加（省略時 `":checked:not(#select_all)"` で後方互換維持） |
+| `app/webroot/js/app/orders/view.js` | `#select_all_print` トグル、`.checkbox-item-print` change での `#btn_download` 抑制（`btnDisabled`/`btnEnabled`）、`$.getScript` で `orderLayoutSelectorDialog.js` を読み込み、`#btn_print` を `.off("click")` 後に `bulkPrint('orders','order','Order',...,'.checkbox-item-print:checked')` でバインド |
+| `app/webroot/js/react/src/OrderLayoutSelectorDialogWrapper.tsx` | **新規**。Sale版と同パターンで `reportGroupCd="order"` |
+| `webpack.config.js` | `orderLayoutSelectorDialog` エントリを追加 |
+| `app/webroot/js/min/app/view.js` | dev版を terser でミニファイし再生成 |
+| `app/webroot/js/min/app/orders/view.js` | 同上 |
 
 ## 備考
 
-- `SaleLayoutSelectorDialogWrapper.tsx` が import する `./theme` と
-  `./components/LayoutSelectorDialog` はリポジトリ既存資産のため省略しています。
+- `SaleLayoutSelectorDialogWrapper.tsx` は本PRでは変更なし（参照のため同梱）。
 - min版は dev版から `npx terser -c -m` で生成（PR記載の `gulp uglify` 相当）。

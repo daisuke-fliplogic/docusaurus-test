@@ -14,16 +14,18 @@ $(function () {
 /**
  * 選択行を一括印刷する共通関数。
  *
- * @param {string} formId        対象フォームのID
- * @param {string} reportGroupCd 帳票グループコード（例: "sale"）
- * @param {string} modelName     モデル名（例: "Sale"）
- * @param {object} daialog       レイアウト選択ダイアログのインスタンス
- * @param {object} self          呼び出し元ボタン要素
+ * @param {string} formId         対象フォームのID
+ * @param {string} reportGroupCd  帳票グループコード（例: "sale", "order"）
+ * @param {string} modelName      モデル名（例: "Sale", "Order"）
+ * @param {object} daialog        レイアウト選択ダイアログのインスタンス
+ * @param {object} self           呼び出し元ボタン要素
+ * @param {string} checkedSelector 対象チェックボックスのセレクタ（省略時は従来挙動）
  */
-bulkPrint = function (formId, reportGroupCd, modelName, daialog, self) {
+bulkPrint = function (formId, reportGroupCd, modelName, daialog, self, checkedSelector) {
+  checkedSelector = checkedSelector || ":checked:not(#select_all)";
   var form = $("#" + formId);
 
-  if ($(":checked:not(#select_all)", form).length > 0) {
+  if ($(checkedSelector, form).length > 0) {
     // レイアウト選択ダイアログを開き、選択後に帳票出力を実行
     daialog.open(reportGroupCd, function (layoutId) {
       var $form = $("<form>", {
@@ -32,7 +34,7 @@ bulkPrint = function (formId, reportGroupCd, modelName, daialog, self) {
         target: "_blank"
       });
 
-      $(":checked:not(#select_all)", form).each(function () {
+      $(checkedSelector, form).each(function () {
         $form.append($("<input>", {
           type: "hidden",
           name: "ids[]",

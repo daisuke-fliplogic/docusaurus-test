@@ -5,6 +5,8 @@ module.exports = {
   entry: {
     saleLayoutSelectorDialog:
       "./app/webroot/js/react/src/SaleLayoutSelectorDialogWrapper.tsx",
+    orderLayoutSelectorDialog:
+      "./app/webroot/js/react/src/OrderLayoutSelectorDialogWrapper.tsx",
     // ... 他のReactエントリ
   },
   output: {
