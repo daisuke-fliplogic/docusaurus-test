@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'my-website/**'
 
 # GitHub Pagesに書き込むための権限設定
 permissions:
